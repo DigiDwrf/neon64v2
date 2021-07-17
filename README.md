@@ -12,7 +12,7 @@ This project uses [ARM9's fork of the bass assembler](https://github.com/ARM9/ba
 
 This will fetch bass, build the tools (bass and chksum64), and build neon64bu.rom. `make pkg` builds the release ZIP.
 
-You can also build it using make_rom.bat inside 'builder' folder (windows cmd)
+You can also build it using make_rom.bat inside 'builder' folder (windows cmd).
 
 ## Overview
 
