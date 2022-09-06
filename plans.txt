@@ -34,13 +34,11 @@ Missing features needed for better accuracy:
 Desired features:
 - Gameshark version
 - 4 player via Four Score
-- Remember PAL setting per-game
 - Control remapping
 - Arkanoid paddle
 - Zapper
 - Reset, power cycle
 - PAL N64 mode
-- Unofficial CPU opcodes
 - Screenshots
 - Famicom Disk System
 - More mappers
@@ -48,13 +46,9 @@ Desired features:
 - Save to Controller Pak
 - Savestate (Expansion Pak, persistent)
 - Unlock framerate, fast-forward
-- Some NES 2.0 support? (PAL, submapper, CHRRAM size, etc)
+- Some NES 2.0 support? (submapper, CHRRAM size, etc)
 
 Desired mappers:
-Easy
-- 34 (Deadly Towers)
-- 11 (Color Dreams)
-- 66 (SMB+Duck Hunt)
 
 - 111 (homebrew, memblers)
 
@@ -69,31 +63,28 @@ Easy
 Known bugs:
 * Profiling is wonky in PAL mode
 * Mike Tyson's Punch Out - A line is out of place on the first screen (MMC2 logic?)
-* Battletoads - Dark Queen doesn't appear on the monitor in pre-game
-* I have Y inc and X reset happening 8 pixels earlier than I think they should,
-  this seems to fix a lot of scroll issues, but I don't understand why it's needed.
 
 * Audio
   - Pop when shooting sword in Zelda is irritatingly loud
-  - Some audio glitching in Mega Man 2 intro (check hw?)
+  - Some glitching in Mega Man 2 intro (check hw?)
 
 * Crashes
-  - Bomberman II hangs before demo after title screen fades
-  - Aladdin bad opcode before title screen (needs unofficial SLO)
-  - Streemerz needs unofficial opcodes
+  - Wally Bear and the No! Gang hangs on boot
 
 * Mid-frame palette change
   - Bill & Ted - dialog boxes
   - Wizards & Warriors - status bar
 
 * Timing
-  - Rad Racer - single lines out of place (mid-line fine X? timing?)
+  - Delaying all interrupts by one instruction is not particularly
+    well-motivated, might cause some of these issues below.
+  - Rad Racer - lots of lines out of place (mid-line fine X?)
   - Jurassic Park - Ocean logo on the title screen has a few lines out of place, (mid-line fine X? timing?)
-  - Marble Madness - There's a little flickering before the level start text box
-  - DPCM Letterbox - First line is scrolled wrong (need separate Y inc and X reset?)
-  - Pirates! - Flashing in lower right corner of town image
-  - Fantasy Zone (Unlicensed) - Title screen text bounces
+  - DPCM Letterbox - First line is scrolled wrong (need separate Y inc and X reset? IRQ timing?)
   - Battletoads - Small screen bounce as the walkers phase in
+  - Battletoads - Flicker at bottom of status bar
+  - Big Nose Freaks Out - "Select Game Type" screen bounce
+  - Kirby - Flicker on edge of status bar on overworld screens
 
 * MMC1
   - Nobunaga's Ambition title screen and in-game are messed up (MMC1 board variant)

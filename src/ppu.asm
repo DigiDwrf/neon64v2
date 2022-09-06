@@ -85,7 +85,6 @@ constant visible_pixels(256)
 constant hblank_pixels(sprite_fetch_pixels+bg_prefetch_pixels+bg_dummy_nt_pixels)
 constant scanline_pixels(idle_pixels+visible_pixels+hblank_pixels)
 constant vblank_delay(1)
-constant eol_early(8)
 
 begin_overlay_region(ppu_overlay)
 begin_overlay(base)
@@ -270,10 +269,12 @@ WriteCtrl:
   beqz t1,+
   sb cpu_t0, ppu_ctrl (r0)
 
-// NMI flag changed, set/clear nmi_pending
+// NMI flag changed, set nmi_pending if newly enabled
   lbu t1, ppu_status (r0)
   and t0, cpu_t0, t1
   andi t0, 0b1000'0000
+  beqz t0,+
+  srl t0, 7-1
   sb t0, nmi_pending (r0)
 +
   jr ra
@@ -443,8 +444,6 @@ ReadStatus:
   sd t0, ppu_sp0_cycle (r0)
 +
 
-// NMI may have been asserted, clear it
-  sb r0, nmi_pending (r0)
   andi t0, cpu_t1, 0b0111'1111
   jr ra
   sb t0, ppu_status (r0)

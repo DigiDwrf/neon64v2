@@ -52,9 +52,8 @@ scope FrameLoop: {
 // pre-render scanline
   daddi cycle_balance, idle_pixels * ppu_div
 
-// Clear vblank, sp0, overflow in status and clear NMI
+// Clear vblank, sp0, overflow in status
   lbu t0, ppu_status (r0)
-  sb r0, nmi_pending (r0)
   andi t0, 0b0001'1111
   sb t0, ppu_status (r0)
   daddi t0, r0, -1
@@ -114,7 +113,7 @@ if {defined LOG_VRAM_ADDR} {
 if {defined PPU_MMC3} {
 // The counter ticks when we fetch the first sprite tile
 
-constant mmc3_irq_delay(3)
+constant mmc3_irq_delay(4)
 
   daddi cycle_balance, mmc3_irq_delay * ppu_div
   bgezal cycle_balance, Scheduler.Yield
@@ -583,13 +582,9 @@ bg_render_enabled:
   sd t2, ppu_sp0_cycle (r0)
 +
 
-// HACK HACK HACK: EOL early is indefensible, why does it seem needed?
-  daddi cycle_balance, (bg_fetch_tiles * tile_pixels - eol_early) * ppu_div
-
+  daddi cycle_balance, bg_fetch_tiles * tile_pixels * ppu_div
   bgezal cycle_balance, Scheduler.Yield
   nop
-
-  daddi cycle_balance, eol_early * ppu_div
 
 // If there is still fetch left when we resume, finish it.
   lw t0, ppu_catchup_cb (r0)
@@ -1028,6 +1023,7 @@ if {defined DUMP_VRAM} {
   sb t0, ppu_status (r0)
 
   andi t1, 0b1000'0000
+  srl t1, 7-1
   sb t1, nmi_pending (r0)
 
   la t0, (vblank_lines * scanline_pixels - vblank_delay) * ppu_div

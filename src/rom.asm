@@ -31,10 +31,16 @@ begin_overlay(9)
 include "mappers/mapper9.asm"
 begin_overlay(10)
 include "mappers/mapper10.asm"
+begin_overlay(11)
+include "mappers/mapper11.asm"
 begin_overlay(30)
 include "mappers/mapper30.asm"
 begin_overlay(31)
 include "mappers/mapper31.asm"
+begin_overlay(34)
+include "mappers/mapper34.asm"
+begin_overlay(66)
+include "mappers/mapper66.asm"
 begin_overlay(71)
 include "mappers/mapper71.asm"
 end_overlay_region()
@@ -108,6 +114,27 @@ still_fail:
 +
   addi a0, 16
   ls_gp(sw a0, nes_rom_cart_addr)
+
+// Check for NES 2.0 header
+  ls_gp(lbu t0, nes_header + 7)
+  andi t0, 0b1100
+  lli t1, 0b1000
+  bne t0, t1, after_nes2
+  nop
+// NES 2.0 header detected
+// TODO: submapper, CHRRAM size
+
+if {defined NTSC_NES} {
+// Check if we should switch to PAL mode from default NTSC mode
+// TODO Probably shouldn't do this if we were manually switched back to PAL mode
+  ls_gp(lbu t0, nes_header + 12)
+  lli t1, 1 // PAL
+  andi t0, 0b11
+  beq t0, t1, SwitchModel
+  nop
+}
+
+after_nes2:
 
 // Save start of PRG ROM (physical, for TLB)
   la t0, nes_rom & 0x1fff'ffff
@@ -223,8 +250,22 @@ not_mmc1:
   consider_mapper(7)
   consider_mapper(9)
   consider_mapper(10)
+  consider_mapper(11)
   consider_mapper(30)
   consider_mapper(31)
+// consider mapper 34 only with zero CHR ROM pages (BNROM)
+// when NINA-001 is supported this can be replaced with `consider_mapper(34)`
+  lli t2, 34
+  bne t0, t2,+
+  nop
+  ls_gp(lbu t2, chrrom_page_count)
+  bgtz t2,+
+  nop
+  load_overlay_from_rom(mapper_overlay, 34)
+  j Mapper34.Init
+  la_gp(ra, mapper_ok)
++
+  consider_mapper(66)
   consider_mapper(71)
 // HACK pretend 206 is 4
   lli t2, 206
